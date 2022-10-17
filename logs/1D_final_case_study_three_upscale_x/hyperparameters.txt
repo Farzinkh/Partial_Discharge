@@ -1,0 +1,76 @@
+--------------------(InputLayer	input_3)--------------------
+batch_input_shape	(None, 400, 1)
+sparse	False
+ragged	False
+--------------------(GaussianNoise	gaussian_noise_1)--------------------
+stddev	0.2
+--------------------(Conv1D	conv1d_2)--------------------
+batch_input_shape	(None, 400, 1)
+filters	64
+kernel_size	(7,)
+strides	(1,)
+padding	valid
+data_format	channels_last
+dilation_rate	(1,)
+groups	1
+activation	relu
+use_bias	True
+kernel_initializer	{'class_name': 'GlorotUniform', 'config': {'seed': None}}
+bias_initializer	{'class_name': 'Zeros', 'config': {}}
+kernel_regularizer	{'class_name': 'L2', 'config': {'l2': 0.30000001192092896}}
+--------------------(AveragePooling1D	average_pooling1d_2)--------------------
+strides	(4,)
+pool_size	(4,)
+padding	valid
+data_format	channels_last
+--------------------(Dropout	dropout_2)--------------------
+rate	0.1
+--------------------(Conv1D	conv1d_3)--------------------
+filters	256
+kernel_size	(10,)
+strides	(1,)
+padding	valid
+data_format	channels_last
+dilation_rate	(1,)
+groups	1
+activation	relu
+use_bias	True
+kernel_initializer	{'class_name': 'GlorotUniform', 'config': {'seed': None}}
+bias_initializer	{'class_name': 'Zeros', 'config': {}}
+kernel_regularizer	{'class_name': 'L2', 'config': {'l2': 0.30000001192092896}}
+--------------------(AveragePooling1D	average_pooling1d_3)--------------------
+strides	(2,)
+pool_size	(2,)
+padding	valid
+data_format	channels_last
+--------------------(Dropout	dropout_3)--------------------
+rate	0.2
+--------------------(Flatten	flatten_1)--------------------
+data_format	channels_last
+--------------------(Dense	dense_4)--------------------
+units	512
+activation	relu
+use_bias	True
+kernel_initializer	{'class_name': 'GlorotUniform', 'config': {'seed': None}}
+bias_initializer	{'class_name': 'Zeros', 'config': {}}
+kernel_regularizer	{'class_name': 'L2', 'config': {'l2': 0.4000000059604645}}
+--------------------(Dense	dense_5)--------------------
+units	256
+activation	relu
+use_bias	True
+kernel_initializer	{'class_name': 'GlorotUniform', 'config': {'seed': None}}
+bias_initializer	{'class_name': 'Zeros', 'config': {}}
+kernel_regularizer	{'class_name': 'L2', 'config': {'l2': 0.0}}
+--------------------(Dense	dense_6)--------------------
+units	512
+activation	relu
+use_bias	True
+kernel_initializer	{'class_name': 'GlorotUniform', 'config': {'seed': None}}
+bias_initializer	{'class_name': 'Zeros', 'config': {}}
+kernel_regularizer	{'class_name': 'L2', 'config': {'l2': 0.30000001192092896}}
+--------------------(Dense	dense_7)--------------------
+units	3
+activation	linear
+use_bias	True
+kernel_initializer	{'class_name': 'GlorotUniform', 'config': {'seed': None}}
+bias_initializer	{'class_name': 'Zeros', 'config': {}}
