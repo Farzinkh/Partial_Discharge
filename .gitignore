@@ -2,9 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
+codes/.ipynb_checkpoints
 
 # Datasets
 datasets/*.rar
+datasets/*.csv
 
 # C extensions
 *.so
