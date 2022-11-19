@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+plt.rcParams.update({'font.size': 36})
 with open('xgboost.log') as f:
     lines = f.readlines()   
 flag=False
@@ -22,6 +23,7 @@ for l in lines:
             zlist.append(float(l[27:]))
         elif counter==5:   
             case=l
+            case=case.replace("CS", "DB")
         elif counter==8:   
             samples=l[9:]
             if (firstline):
@@ -32,20 +34,20 @@ for l in lines:
             rmselist.append(float(l[20:]))                    
         counter=counter+1
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(60, 30))
   
-ax1.plot(namelist,xlist,label='X')    
-ax1.plot(namelist,ylist,label='Y')
-ax1.plot(namelist,zlist,label='Z')
+ax1.plot(namelist,xlist,linewidth=15,label='X')    
+ax1.plot(namelist,ylist,dashes=[2, 2, 10, 2],linewidth=15,label='Y')
+ax1.plot(namelist,zlist,'--',dashes=(2, 1),linewidth=15,label='Z')
 ax1.set_xticklabels(namelist, rotation=60, ha='right')
 ax1.legend()
 ax1.grid()
-ax1.set_ylabel('R2')
-ax1.set_xlabel('Case study and samplerates')
+ax1.set_ylabel('Coefficient of Determination',fontsize=36)
+ax1.set_xlabel('Case study and samplerates',fontsize=36)
 
-ax2.plot(namelist,rmselist)    
+ax2.plot(namelist,rmselist,linewidth=15)    
 ax2.set_xticklabels(namelist, rotation=60, ha='right')
 ax2.grid()
-ax2.set_ylabel('RSME')
-ax2.set_xlabel('Case study and samplerates')
-plt.show()           
+ax2.set_ylabel('RSME (mm)',fontsize=36)
+ax2.set_xlabel('Case study and samplerates',fontsize=36)      
+plt.savefig('Xgboost_samplerate.png', dpi=300)     
