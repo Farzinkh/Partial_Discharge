@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 codes/.ipynb_checkpoints
 
+# Models
+logs/*/*.h5
+
 # Datasets
 datasets/*.rar
 datasets/*.csv
