@@ -50,16 +50,6 @@ r_mean=(xlist+ylist+zlist)/3
 barWidth = 0.25
 
 plt.figure(figsize = (17, 9))
-# set height of bar
-
-# for i in range(len(namelist)):
-#     plt.text(i, x_r[i]/2, str(round(x_r[i],2)), ha = 'center',fontsize = 20)
-
-# for i in range(len(y_r)):
-#     plt.text(i+barWidth, y_r[i]/2, str(round(y_r[i],2)), ha = 'center',fontsize = 20)
-
-# for i in range(len(z_r)):
-#     plt.text(i+(2*barWidth), z_r[i]/2, str(round(z_r[i],2)), ha = 'center',fontsize = 20)
 
 # Set position of bar on X axis
 address={}
@@ -104,5 +94,20 @@ plt.xticks([r + barWidth for r in range(len(sample_rates))],
         Sample_rates)
 plt.grid()
 plt.legend()
+
+# set height of bar
+
+
+for i,ds in address.items():
+    t=r_mean[ds[0]]
+    plt.text(br1[sample_rates.index(i)], t/2, str(round(t,2)), ha = 'center',fontsize = 20,rotation=90)
+
+for i,ds in address.items():
+    t=r_mean[ds[1]]
+    plt.text(br2[sample_rates.index(i)], t/2, str(round(t,2)), ha = 'center',fontsize = 20,rotation=90)
+
+for i,ds in address.items():
+    t=r_mean[ds[2]]
+    plt.text(br3[sample_rates.index(i)], t/2, str(round(t,2)), ha = 'center',fontsize = 20,rotation=90)
 
 plt.savefig(save_path,dpi=500)
