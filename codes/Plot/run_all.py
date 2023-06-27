@@ -9,10 +9,10 @@ import statistics
 from tensorflow.keras import layers,Model
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import backend as K
+from plot_pd_results import plot_pred_real
 plt.style.use('seaborn-white')
 plt.rcParams.update({'font.size':15})
 tf.test.gpu_device_name()
-
 
 def load_db(label_name,typee):
     if label_name=="THREE_P1" or label_name=="THREE_P2" or label_name=="THREE_RESHAPE" or label_name=="THREE_UPSCALE":
@@ -75,18 +75,20 @@ def grouping(values,errors,classes=8):
 def addlabels2(x,y,text):
     for i in range(len(x)):
         plt.text(i,y[i],str(round(float(text[i]),1))+'%',ha = 'center',fontweight ='bold',fontsize=20)
-            
-def grouping2(values,classes=8):
-    m=np.mean(values)
-    sd=statistics.stdev(values)
-    maximum=np.max(values)
-    minimum=np.min(values)
 
-    step=round((maximum-minimum)/classes,2)
+def grouping2(values,classes=8):
+    m=round(np.mean(values),2)
+    sd=round(statistics.stdev(values),2)
+    maximum=round(np.max(values),2)
+    minimum=round(np.min(values),2)
+    threshold=round(len(values)*0.8)
+    threshold=np.sort(values)[threshold]
+    
+    step=(maximum-minimum)/classes
     a,row=0,0
     l,clasifynumbers=[],{}
     for i in range(classes):
-        l.append([a,a+step])
+        l.append([a,round(a+step)])
         a=step+a
         clasifynumbers[row]=[]
         row+=1
@@ -97,15 +99,17 @@ def grouping2(values,classes=8):
                 clasifynumbers[row].append(i)
                 break
             row+=1
+
     variety=[]
     for i in range(classes):
         l[i]=str(round(l[i][0]+step))
         variety.append((len(clasifynumbers[i])/len(values))*100) 
 
-    return l,variety
+    return l,variety,threshold
 
-filter=['1D_final_case_study_Three_P1_y_triple','1D_final_case_study_Three_P2_y_triple','Xgboost','SVR','linear_Regression','Coefficient_Cavity_Shape.png','Models_Coefficient.png','target_vs_estimate_location.png']
-folders=os.listdir('../logs')
+
+filter=['1D_final_case_study_Three_P1_y_triple','1D_final_case_study_Three_P2_y_triple','Xgboost','SVR','Coefficient_Cavity_Shape.png','Models_Coefficient.png','target_vs_estimate_location.png','R_on_CS3_P2_Y.png']
+folders=os.listdir('../../logs')
 case_study=[]
 for i in folders:
     if i in filter:
@@ -140,10 +144,11 @@ for i in folders:
             case_study.append([model,dataset,i])
 
 for case in case_study:
+    print('working on',case)
     samplerate=400
     label_name=case[1]
     model_name_to_load=case[2]
-    model_name_to_load="../logs/"+model_name_to_load
+    model_name_to_load="../../logs/"+model_name_to_load
     model_name_to_save=model_name_to_load                #model_name_to_load
     model=tf.keras.models.load_model('{}/best_model.h5'.format(model_name_to_load))
 
@@ -204,10 +209,10 @@ for case in case_study:
 
     plt.title("Data distribution in cavity",fontweight ='bold',fontsize=36)
     for i in range(len(groups['RMSE_MEAN'])):
-        plt.bar(labels[i]+' '+str(groups['POLY_MEAN'][i])+'(mm)',groups['RMSE_MEAN'][i],label=labels[i],edgecolor='black')
+        plt.bar(str(groups['POLY_MEAN'][i])+'(mm)',groups['RMSE_MEAN'][i],label=labels[i],edgecolor='black')
     addlabels(labels,groups['RMSE_MEAN'],groups['RMSE_MEAN'])
     plt.ylabel("Average RMSE(mm)",fontweight ='bold',fontsize=30)
-    plt.xlabel("Location",fontweight ='bold',fontsize=30)
+    plt.xlabel("Distance from corners",fontweight ='bold',fontsize=30)
 
     plt.grid()
 
@@ -226,7 +231,7 @@ for case in case_study:
     minimum=round(np.min(values),2)
     plt.title("RMSE Mean :{} Standard deviation :{} Max :{} Min :{}".format(m,sd,maximum,minimum),fontweight ='bold',fontsize=28)
     #plt.hist(values, density=True)
-    groups['RMSE'],groups['variety']=grouping2(list(errors.values()),classes=8)
+    groups['RMSE'],groups['variety'],base_threshold=grouping2(list(errors.values()),classes=8)
     Groups=[]
     for i in range(len(groups['RMSE'])):
         if i==0:
@@ -248,8 +253,24 @@ for case in case_study:
     plt.grid()
     plt.legend(prop = { "size": 30 })
     plt.ylabel("Predict density in percent",fontweight ='bold',fontsize=36)
-    plt.xlabel("RMSE(mm)",fontweight ='bold',fontsize=36)
+    plt.xlabel("Three-dimensional localization error (mm)",fontweight ='bold',fontsize=36)
 
     plt.savefig('{}/losses.png'.format(model_name_to_save),dpi=500)
+    plt.cla()
+    plt.clf()
+
+    fig=plt.figure(figsize=(34,12))
+    ax1 = fig.add_subplot(131)
+    ax2 = fig.add_subplot(132)
+    ax3 = fig.add_subplot(133)
+    data_act = validation[validation['kind'] == 'actual']
+    data_pred = validation[validation['kind'] == 'predict']
+    coordinate = 'x'
+    ax1=plot_pred_real(ax1,data_act,data_pred,coordinate,Xconstant*2, fig_char='(a)',label_on=True)
+    coordinate = 'y'
+    ax2=plot_pred_real(ax2,data_act,data_pred,coordinate,Yconstant*2, fig_char='(b)',label_on=True)
+    coordinate = 'z'
+    ax3=plot_pred_real(ax3,data_act,data_pred,coordinate,Zconstant*2, fig_char='(c)',label_on=True)
+    plt.savefig("{}/evaluate.png".format(model_name_to_save),bbox_inches='tight',dpi=500)
     plt.cla()
     plt.clf()
