@@ -191,7 +191,7 @@ for case in case_study:
         c+=1
         c2+=1
         index+=1
-        errors[c]=math.sqrt((1/3)*((x2-x)**2+(y2-y)**2+(z2-z)**2))
+        errors[c]=math.sqrt((x2-x)**2+(y2-y)**2+(z2-z)**2)
 
     validation=pd.DataFrame.from_dict(validation, orient='index',columns=['x','y','z','index','kind'])
     validation.to_csv("{}/prediction_per_actual.csv".format(model_name_to_save),index=False)
